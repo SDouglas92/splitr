@@ -1,7 +1,5 @@
 package com.example.user.splitr;
 
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +8,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -20,7 +17,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,26 +24,24 @@ import java.util.Date;
 /**
  * Created by user on 28/10/2016.
  */
-public class MainActivity extends AppCompatActivity {
+public class CaptureImage extends AppCompatActivity {
 
-        Button b1,b2;
-        ImageView iv;
-    File mPhoto;
+    Button mCaptureImage;
+    ImageView iv;
     String mCurrentPhotoPath;
     static final int REQUEST_TAKE_PHOTO = 1;
 
 
-    private Uri mImageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.capture_image);
 
-        b1=(Button)findViewById(R.id.button);
+        mCaptureImage=(Button)findViewById(R.id.imageCaptureButton);
         iv=(ImageView)findViewById(R.id.imageView);
 
-        b1.setOnClickListener(new View.OnClickListener() {
+        mCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 dispatchTakePictureIntent();
@@ -130,11 +124,5 @@ public class MainActivity extends AppCompatActivity {
        super.onActivityResult(requestCode, resultCode, intent);
         this.setPic();
     }
-
-
-
-
-
-
 
 }
