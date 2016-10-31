@@ -27,8 +27,8 @@ public class WelcomePage extends AppCompatActivity {
         mOpenImageCapture.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Log.d("Spliter:","Button onclick fired");
-                Intent intent = new Intent(WelcomePage.this, CaptureImage.class);
+                Log.d("Spliter:","Welcome Button onclick fired");
+                Intent intent = new Intent(WelcomePage.this, OcrCaptureActivity.class);
                 startActivity(intent);
             }
         });
