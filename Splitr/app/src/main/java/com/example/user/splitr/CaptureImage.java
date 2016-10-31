@@ -9,10 +9,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.Frame;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +33,13 @@ public class CaptureImage extends AppCompatActivity {
     Button mCaptureImage;
     ImageView iv;
     String mCurrentPhotoPath;
+    Detector mDetector = new Detector() {
+        @Override
+        public SparseArray detect(Frame frame) {
+            return null;
+        }
+    };
+    Frame mFrame;
     static final int REQUEST_TAKE_PHOTO = 1;
 
 
@@ -88,7 +99,7 @@ public class CaptureImage extends AppCompatActivity {
         return image;
     }
 
-    private void setPic() {
+    public void setPic() {
 
         Bitmap mBitmap = null;
         // Get the dimensions of the View
@@ -111,18 +122,33 @@ public class CaptureImage extends AppCompatActivity {
         bmOptions.inPurgeable = true;
 
         try ( InputStream is = new URL( mCurrentPhotoPath ).openStream()) {
-            mBitmap = BitmapFactory.decodeStream( is, null, bmOptions );
+            mBitmap = BitmapFactory.decodeStream(is, null, bmOptions);
         } catch(Exception e) {
 
         }
-        iv.setImageBitmap(mBitmap);
+        Log.d("Set Pic:", mCurrentPhotoPath);
+       mFrame = new Frame.Builder().setBitmap(mBitmap).build();
+
+        mDetector.setProcessor();
+        mDetector.receiveFrame(mFrame);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
        super.onActivityResult(requestCode, resultCode, intent);
-        this.setPic();
+//        this.setPic();
+        Intent nextPageIntent = new Intent(CaptureImage.this, OcrCaptureActivity.class);
+        startActivity(nextPageIntent);
+//        this.setPic();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        setPic();
+                    }
+                },
+                2000);
     }
 
 }

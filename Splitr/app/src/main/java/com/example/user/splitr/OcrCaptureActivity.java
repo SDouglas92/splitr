@@ -14,6 +14,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +41,8 @@ import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Locale;
 
 /**
@@ -71,6 +75,8 @@ public final class OcrCaptureActivity extends AppCompatActivity {
     // A TextToSpeech engine for speaking a String value.
     private TextToSpeech tts;
 
+    public CaptureImage mCaptureImage;
+
     /**
      * Initializes the UI and creates the detector pipeline.
      */
@@ -80,43 +86,45 @@ public final class OcrCaptureActivity extends AppCompatActivity {
         setContentView(R.layout.ocr_capture);
         Log.d("splitr:", "on create fired");
 
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
+//        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
+        setupTextRecognizer();
+//        mCaptureImage.setPic();
 
         // Set good defaults for capturing text.
-        boolean autoFocus = true;
-        boolean useFlash = false;
+//        boolean autoFocus = true;
+//        boolean useFlash = false;
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
-        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
-        if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource(autoFocus, useFlash);
-        } else {
-            requestCameraPermission();
-        }
+//        int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
+//        if (rc == PackageManager.PERMISSION_GRANTED) {
+//            createCameraSource(autoFocus, useFlash);
+//        } else {
+//            requestCameraPermission();
+//        }
 
-        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
-        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
+//        gestureDetector = new GestureDetector(this, new CaptureGestureListener());
+//        scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
-                Snackbar.LENGTH_LONG)
-                .show();
+//        Snackbar.make(mGraphicOverlay, "Tap to Speak. Pinch/Stretch to zoom",
+//                Snackbar.LENGTH_LONG)
+//                .show();
 
         // Set up the Text To Speech engine.
-        TextToSpeech.OnInitListener listener =
-                new TextToSpeech.OnInitListener() {
-                    @Override
-                    public void onInit(final int status) {
-                        if (status == TextToSpeech.SUCCESS) {
-                            Log.d("OnInitListener", "Text to speech engine started successfully.");
-                            tts.setLanguage(Locale.US);
-                        } else {
-                            Log.d("OnInitListener", "Error starting the text to speech engine.");
-                        }
-                    }
-                };
-        tts = new TextToSpeech(this.getApplicationContext(), listener);
+//        TextToSpeech.OnInitListener listener =
+//                new TextToSpeech.OnInitListener() {
+//                    @Override
+//                    public void onInit(final int status) {
+//                        if (status == TextToSpeech.SUCCESS) {
+//                            Log.d("OnInitListener", "Text to speech engine started successfully.");
+//                            tts.setLanguage(Locale.US);
+//                        } else {
+//                            Log.d("OnInitListener", "Error starting the text to speech engine.");
+//                        }
+//                    }
+//                };
+//        tts = new TextToSpeech(this.getApplicationContext(), listener);
     }
 
     /**
@@ -124,6 +132,9 @@ public final class OcrCaptureActivity extends AppCompatActivity {
      * showing a "Snackbar" message of why the permission is needed then
      * sending the request.
      */
+
+
+
     private void requestCameraPermission() {
         Log.w(TAG, "Camera permission is not granted. Requesting permission");
 
@@ -169,7 +180,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
      * the constant.
      */
     @SuppressLint("InlinedApi")
-    private void createCameraSource(boolean autoFocus, boolean useFlash) {
+    private void setupTextRecognizer() {
         Context context = getApplicationContext();
 
         // A text recognizer is created to find text.  An associated multi-processor instance
@@ -204,14 +215,14 @@ public final class OcrCaptureActivity extends AppCompatActivity {
 
         // Creates and starts the camera.  Note that this uses a higher resolution in comparison
         // to other detection examples to enable the text recognizer to detect small pieces of text.
-        mCameraSource =
-                new CameraSource.Builder(getApplicationContext(), textRecognizer)
-                        .setFacing(CameraSource.CAMERA_FACING_BACK)
-                        .setRequestedPreviewSize(1280, 1024)
-                        .setRequestedFps(2.0f)
-                        .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
-                        .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null)
-                        .build();
+//        mCameraSource =
+//                new CameraSource.Builder(getApplicationContext(), textRecognizer)
+//                        .setFacing(CameraSource.CAMERA_FACING_BACK)
+//                        .setRequestedPreviewSize(1280, 1024)
+//                        .setRequestedFps(2.0f)
+//                        .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
+//                        .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null)
+//                        .build();
     }
 
     /**
@@ -277,7 +288,7 @@ public final class OcrCaptureActivity extends AppCompatActivity {
             // we have permission, so create the camerasource
             boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);
             boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
-            createCameraSource(autoFocus, useFlash);
+//            createCameraSource(autoFocus, useFlash);
             return;
         }
 
