@@ -8,7 +8,6 @@ package com.example.user.splitr;
 import android.util.Log;
 import android.util.SparseArray;
 
-import com.example.user.splitr.CaptureImage;
 import com.example.user.splitr.GraphicOverlay;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.text.TextBlock;

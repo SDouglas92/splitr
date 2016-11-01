@@ -1,6 +1,9 @@
 package com.example.user.splitr;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -15,8 +18,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,23 +31,19 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * Created by user on 28/10/2016.
+ * Created by user on 01/11/2016.
  */
-public class CaptureImage extends AppCompatActivity {
+public class CameraCaptureActivity extends AppCompatActivity {
+    private static final int RC_Handler_GMS = 9001;
 
     Button mCaptureImage;
     ImageView iv;
     String mCurrentPhotoPath;
-    Detector mDetector = new Detector() {
-        @Override
-        public SparseArray detect(Frame frame) {
-            return null;
-        }
-    };
+    TextRecognizer textRecognizer;
+    private GraphicOverlay<OcrGraphic> mGraphicOverlay;
+
     Frame mFrame;
     static final int REQUEST_TAKE_PHOTO = 1;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,12 +53,56 @@ public class CaptureImage extends AppCompatActivity {
         mCaptureImage=(Button)findViewById(R.id.imageCaptureButton);
         iv=(ImageView)findViewById(R.id.imageView);
 
+//        setContentView(R.layout.ocr_capture);
+        Log.d("splitr:", "on create fired");
+
+//        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
+        mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
+        setupTextRecognizer();
+
         mCaptureImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 dispatchTakePictureIntent();
             }
         });
+
+
+    }
+
+    @SuppressLint("InlinedApi")
+    private void setupTextRecognizer() {
+        Context context = getApplicationContext();
+
+        // A text recognizer is created to find text.  An associated multi-processor instance
+        // is set to receive the text recognition results, track the text, and maintain
+        // graphics for each text block on screen.  The factory is used by the multi-processor to
+        // create a separate tracker instance for each text block.
+        textRecognizer = new TextRecognizer.Builder(context).build();
+        textRecognizer.setProcessor(new OcrDetectorProcessor(mGraphicOverlay));
+
+        if (!textRecognizer.isOperational()) {
+            // Note: The first time that an app using a Vision API is installed on a
+            // device, GMS will download a native libraries to the device in order to do detection.
+            // Usually this completes before the app is run for the first time.  But if that
+            // download has not yet completed, then the above call will not detect any text,
+            // barcodes, or faces.
+            //
+            // isOperational() can be used to check if the required native libraries are currently
+            // available.  The detectors will automatically become operational once the library
+            // downloads complete on device.
+            Log.w("Tag", "Detector dependencies are not yet available.");
+
+            // Check for low storage.  If there is low storage, the native library will not be
+            // downloaded, so detection will not become operational.
+            IntentFilter lowstorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
+            boolean hasLowStorage = registerReceiver(null, lowstorageFilter) != null;
+
+            if (hasLowStorage) {
+                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
+                Log.w("Tag", getString(R.string.low_storage_error));
+            }
+        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -127,28 +172,19 @@ public class CaptureImage extends AppCompatActivity {
 
         }
         Log.d("Set Pic:", mCurrentPhotoPath);
-       mFrame = new Frame.Builder().setBitmap(mBitmap).build();
+        iv.setImageBitmap(mBitmap);
 
-        mDetector.setProcessor();
-        mDetector.receiveFrame(mFrame);
+        mFrame = new Frame.Builder().setBitmap(mBitmap).build();
+        textRecognizer.receiveFrame(mFrame);
+
+
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent)
     {
-       super.onActivityResult(requestCode, resultCode, intent);
-//        this.setPic();
-        Intent nextPageIntent = new Intent(CaptureImage.this, OcrCaptureActivity.class);
-        startActivity(nextPageIntent);
-//        this.setPic();
+        super.onActivityResult(requestCode, resultCode, intent);
+        this.setPic();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        setPic();
-                    }
-                },
-                2000);
     }
-
 }

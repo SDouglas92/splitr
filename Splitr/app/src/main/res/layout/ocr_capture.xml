@@ -7,16 +7,12 @@
     android:layout_height="match_parent"
     android:keepScreenOn="true">
 
-    <com.example.user.splitr.CameraSourcePreview
-        android:id="@+id/preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+
 
         <com.example.user.splitr.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.example.user.splitr.CameraSourcePreview>
 
 </LinearLayout>
