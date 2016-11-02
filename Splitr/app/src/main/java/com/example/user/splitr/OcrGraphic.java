@@ -59,6 +59,7 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
     }
 
     public TextBlock getTextBlock() {
+
         return mText;
     }
 
