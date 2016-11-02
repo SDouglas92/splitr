@@ -41,11 +41,21 @@
         android:name=".CameraCaptureActivity"
         android:label=""
         android:parentActivityName=".WelcomePage">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+
+        <activity
+            android:name=".DisplayBill"
+            android:label=""
+            android:parentActivityName=".WelcomePage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-         </activity>
+        </activity>
 
 
 

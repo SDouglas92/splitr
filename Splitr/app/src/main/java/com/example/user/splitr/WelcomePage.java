@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 /**
  * Created by user on 29/10/2016.
@@ -37,6 +40,7 @@ public class WelcomePage extends AppCompatActivity {
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc != PackageManager.PERMISSION_GRANTED) {
             requestCameraPermission();}
+        clearTempFolder();
 
 
         mOpenImageCapture.setOnClickListener(new View.OnClickListener(){
@@ -73,6 +77,23 @@ public class WelcomePage extends AppCompatActivity {
         Toast.makeText(getApplicationContext(),R.string.permission_camera_rationale, Toast.LENGTH_LONG).show();
 
 
+    }
+
+    private void clearTempFolder(){
+        Log.d("Clearing temp folder", "Clearing temp folder");
+        File dir = new File(Environment.getExternalStorageDirectory()+"/Android/data/com.example.user.splitr/files/Pictures");
+
+
+        if (dir.isDirectory())
+        {
+            String[] children = dir.list();
+            for (int i = 0; i < children.length; i++)
+            {
+                new File(dir, children[i]).delete();
+
+            }
+
+        }
     }
 
 
