@@ -17,9 +17,9 @@ import java.util.Set;
 public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     private final Object mLock = new Object();
     private int mPreviewWidth;
-    private float mWidthScaleFactor = 0.6f;
+    private float mWidthScaleFactor = 0.3f;
     private int mPreviewHeight;
-    private float mHeightScaleFactor = 0.6f;
+    private float mHeightScaleFactor = 0.3f;
     private int mFacing = CameraSource.CAMERA_FACING_BACK;
     private Set<T> mGraphics = new HashSet<>();
 
