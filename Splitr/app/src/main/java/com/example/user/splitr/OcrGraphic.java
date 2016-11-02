@@ -38,7 +38,7 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
             sRectPaint = new Paint();
             sRectPaint.setColor(TEXT_COLOR);
             sRectPaint.setStyle(Paint.Style.STROKE);
-            sRectPaint.setStrokeWidth(4.0f);
+            sRectPaint.setStrokeWidth(1.0f);
         }
 
         if (sTextPaint == null) {
@@ -91,12 +91,15 @@ public class OcrGraphic extends GraphicOverlay.Graphic {
         }
 
         // Draws the bounding box around the TextBlock.
-        RectF rect = new RectF(mText.getBoundingBox());
-        rect.left = translateX(rect.left);
-        rect.top = translateY(rect.top);
-        rect.right = translateX(rect.right);
-        rect.bottom = translateY(rect.bottom);
-        canvas.drawRect(rect, sRectPaint);
+        List<? extends Text> textComponentsBox = mText.getComponents();
+        for(Text currentText : textComponentsBox) {
+            RectF rect = new RectF(currentText.getBoundingBox());
+            rect.left = translateX(rect.left);
+            rect.top = translateY(rect.top);
+            rect.right = translateX(rect.right);
+            rect.bottom = translateY(rect.bottom);
+            canvas.drawRect(rect, sRectPaint);
+        }
 
         // Break the text into multiple lines and draw each one according to its own bounding box.
         List<? extends Text> textComponents = mText.getComponents();
